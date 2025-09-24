@@ -1,0 +1,39 @@
+name: Trigger Render Deploys
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  trigger-deploys:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Web Service Deploy
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} # Ensure this secret is set in your repository settings
+          RENDER_WEB_SERVICE_ID: ${{ secrets.RENDER_WEB_SERVICE_ID }}
+        run: |
+          if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_WEB_SERVICE_ID" ]; then
+            echo "Missing Render API key or web service id. Skipping web deploy."
+          else
+            echo "Triggering web deploy..."
+            curl -s -X POST "https://api.render.com/v1/services/${RENDER_WEB_SERVICE_ID}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{"clearCache":true}' | jq .
+          fi
+
+      - name: Trigger Render Worker Service Deploy
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }} # Ensure this secret is set in your repository settings
+          RENDER_WORKER_SERVICE_ID: ${{ secrets.RENDER_WORKER_SERVICE_ID }}
+        run: |
+          if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_WORKER_SERVICE_ID" ]; then
+            echo "Missing Render API key or worker service id. Skipping worker deploy."
+          else
+            echo "Triggering worker deploy..."
+            curl -s -X POST "https://api.render.com/v1/services/${RENDER_WORKER_SERVICE_ID}/deploys" \
+              -H "Authorization: Bearer ${RENDER_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{"clearCache":true}' | jq .
+          fi

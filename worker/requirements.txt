@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+requests
+sentence-transformers
+chromadb
+whisper
+torch

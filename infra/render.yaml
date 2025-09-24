@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ai-student-bot-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./web/Dockerfile
+    envVars:
+      - key: ENV
+        value: production
+
+  - type: worker
+    name: ai-student-bot-worker
+    runtime: docker
+    plan: free
+    dockerfilePath: ./worker/Dockerfile
+    envVars:
+      - key: ENV
+        value: production
